@@ -1,0 +1,6 @@
+---
+
+want_workstation_btop: yes
+
+workstation_btop_package:
+  - btop

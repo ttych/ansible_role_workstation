@@ -1,0 +1,11 @@
+---
+
+- block:
+
+    - name: install btop
+      ansible.builtin.package:
+        name: "{{ workstation_btop_package }}"
+        state: present
+      become: yes
+
+  when: want_workstation_btop

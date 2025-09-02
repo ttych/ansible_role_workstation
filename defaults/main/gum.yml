@@ -1,0 +1,6 @@
+---
+
+want_workstation_gum: yes
+
+workstation_gum_package:
+  - gum

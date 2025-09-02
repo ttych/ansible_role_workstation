@@ -1,0 +1,5 @@
+---
+
+- block:
+
+    - include_tasks: app.yml

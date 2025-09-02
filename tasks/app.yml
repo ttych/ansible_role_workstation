@@ -1,0 +1,7 @@
+---
+
+- include_tasks: app_gum.yml
+
+- include_tasks: app_btop.yml
+
+- include_tasks: app_geekbench.yml

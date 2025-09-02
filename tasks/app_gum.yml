@@ -1,0 +1,10 @@
+---
+
+- block:
+    - name: install gum
+      ansible.builtin.package:
+        name: "{{ workstation_gum_package }}"
+        state: present
+      become: yes
+
+  when: want_workstation_gum
