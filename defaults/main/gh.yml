@@ -1,0 +1,6 @@
+---
+
+want_workstation_gh: yes
+
+workstation_gh_package:
+  - gh

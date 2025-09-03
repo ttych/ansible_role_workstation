@@ -1,0 +1,70 @@
+---
+
+- block:
+
+    - name: check current lazydocker
+      ansible.builtin.stat:
+        path: "{{ workstation_lazydocker_local_bin }}"
+      register: t_workstation_lazydocker_local_bin
+
+    - block:
+
+        - name: get latest lazydocker version from GitHub API
+          ansible.builtin.uri:
+            url: https://api.github.com/repos/jesseduffield/lazydocker/releases/latest
+            return_content: yes
+          register: t_workstation_lazydocker_github_latest_release
+          changed_when: no
+
+        - name: extract latest lazydocker version
+          ansible.builtin.set_fact:
+            workstation_lazydocker_version: "{{ (t_workstation_lazydocker_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_lazydocker_version is not defined or workstation_lazydocker_version == ""
+
+    - block:
+
+        - name: get current lazydocker version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_lazydocker_local_bin }} --version | sed -n 's/Version: //p'"
+          register: t_workstation_lazydocker_current_version
+          changed_when: no
+
+      when: t_workstation_lazydocker_local_bin.stat.exists
+
+    - block:
+
+        - name: download lazydocker archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_lazydocker_github_download_url }}"
+            dest: "/tmp/lazydocker.tar.gz"
+            mode: '0644'
+
+        - name: extract lazydocker archive
+          ansible.builtin.unarchive:
+            src: "/tmp/lazydocker.tar.gz"
+            dest: "/tmp"
+            creates: "/tmp/lazydocker"
+
+        - name: "install lazydocker binary to {{ workstation_lazydocker_local_bin }}"
+          ansible.builtin.copy:
+            src: /tmp/lazydocker
+            dest: "{{ workstation_lazydocker_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /tmp/lazydocker.tar.gz
+            - /tmp/lazydocker
+            - /tmp/README.md
+            - /tmp/LICENSE
+
+      when: not t_workstation_lazydocker_local_bin.stat.exists or (t_workstation_lazydocker_current_version is defined and t_workstation_lazydocker_current_version.stdout != workstation_lazydocker_version)
+
+  when: want_workstation_lazydocker

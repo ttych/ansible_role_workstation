@@ -5,3 +5,9 @@
 - include_tasks: app_btop.yml
 
 - include_tasks: app_geekbench.yml
+
+- include_tasks: app_fastfetch.yml
+
+- include_tasks: app_gh.yml
+
+- include_tasks: app_lazydocker.yml

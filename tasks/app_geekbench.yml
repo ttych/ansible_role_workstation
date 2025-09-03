@@ -34,7 +34,7 @@
     - name: create bin shortcut
       ansible.builtin.file:
         src: "{{ workstation_geekbench_bin }}"
-        dest: "{{ workstation_geekbench_local_bin }}/{{ workstation_geekbench_bin_name }}"
+        dest: "{{ workstation_geekbench_local_bin_dir }}/{{ workstation_geekbench_bin_name }}"
         state: link
         force: yes
         follow: no

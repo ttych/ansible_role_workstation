@@ -1,0 +1,6 @@
+---
+
+want_workstation_fastfetch: yes
+
+workstation_fastfetch_package:
+  - fastfetch

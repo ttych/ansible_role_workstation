@@ -1,0 +1,11 @@
+---
+
+- block:
+
+    - name: install fastfetch
+      ansible.builtin.package:
+        name: "{{ workstation_fastfetch_package }}"
+        state: present
+      become: yes
+
+  when: want_workstation_fastfetch
