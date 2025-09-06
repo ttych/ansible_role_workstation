@@ -1,0 +1,70 @@
+---
+
+- block:
+
+    - name: check current lazygit
+      ansible.builtin.stat:
+        path: "{{ workstation_lazygit_local_bin }}"
+      register: t_workstation_lazygit_local_bin
+
+    - block:
+
+        - name: get latest lazygit version from GitHub API
+          ansible.builtin.uri:
+            url: https://api.github.com/repos/jesseduffield/lazygit/releases/latest
+            return_content: yes
+          register: t_workstation_lazygit_github_latest_release
+          changed_when: no
+
+        - name: extract latest lazygit version
+          ansible.builtin.set_fact:
+            workstation_lazygit_version: "{{ (t_workstation_lazygit_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_lazygit_version is not defined or workstation_lazygit_version == ""
+
+    - block:
+
+        - name: get current lazygit version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_lazygit_local_bin }} --version | sed -e 's/^.*, version=\\([^,]*\\).*/\\1/g'"
+          register: t_workstation_lazygit_current_version
+          changed_when: no
+
+      when: t_workstation_lazygit_local_bin.stat.exists
+
+    - block:
+
+        - name: download lazygit archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_lazygit_github_download_url }}"
+            dest: "/tmp/lazygit.tar.gz"
+            mode: '0644'
+
+        - name: extract lazygit archive
+          ansible.builtin.unarchive:
+            src: "/tmp/lazygit.tar.gz"
+            dest: "/tmp"
+            creates: "/tmp/lazygit"
+
+        - name: "install lazygit binary to {{ workstation_lazygit_local_bin }}"
+          ansible.builtin.copy:
+            src: /tmp/lazygit
+            dest: "{{ workstation_lazygit_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /tmp/lazygit.tar.gz
+            - /tmp/lazygit
+            - /tmp/README.md
+            - /tmp/LICENSE
+
+      when: not t_workstation_lazygit_local_bin.stat.exists or (t_workstation_lazygit_current_version is defined and t_workstation_lazygit_current_version.stdout != workstation_lazygit_version)
+
+  when: want_workstation_lazygit

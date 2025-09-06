@@ -11,3 +11,5 @@
 - include_tasks: app_gh.yml
 
 - include_tasks: app_lazydocker.yml
+
+- include_tasks: app_lazygit.yml

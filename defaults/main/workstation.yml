@@ -1,0 +1,4 @@
+---
+
+workstation_local_dir: "/usr/local"
+workstation_local_bin_dir: "{{ workstation_local_dir }}/bin"
