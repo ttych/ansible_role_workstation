@@ -6,7 +6,7 @@ workstation_geekbench_version: 6.4.0
 workstation_geekbench_archive_name: "Geekbench-{{workstation_geekbench_version}}-{{ ansible_system }}"
 workstation_geekbench_url: "https://cdn.geekbench.com/{{ workstation_geekbench_archive_name }}.tar.gz"
 workstation_geekbench_version_major: "{{ workstation_geekbench_version | split('.') | first }}"
-workstation_geekbench_local_dir: "/usr/local"
+workstation_geekbench_local_dir: "{{ workstation_local_dir }}"
 workstation_geekbench_local_bin_dir: "{{ workstation_geekbench_local_dir }}/bin"
 workstation_geekbench_dir: "{{ workstation_geekbench_local_dir }}/{{ workstation_geekbench_archive_name }}"
 workstation_geekbench_bin_name: "geekbench{{ workstation_geekbench_version_major }}"
