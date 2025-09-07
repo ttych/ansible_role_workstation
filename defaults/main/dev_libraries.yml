@@ -1,0 +1,34 @@
+---
+
+want_workstation_dev_libraries: yes
+
+workstation_dev_libraries:
+  - autoconf
+  - bison
+  - build-essential
+  - clang
+  - gir1.2-clutter-1.0
+  - gir1.2-gtop-2.0
+  - imagemagick
+  - libffi-dev
+  - libgdbm-dev
+  - libjemalloc2
+  - libmagickwand-dev
+  - libmysqlclient-dev
+  - libncurses5-dev
+  - libpq-dev
+  - libreadline-dev
+  - libreadline-dev
+  - libsqlite3-0
+  - libssl-dev
+  - libvips
+  - libyaml-dev
+  - mupdf
+  - mupdf-tools
+  - pkg-config
+  - postgresql-client
+  - postgresql-client-common
+  - redis-tools
+  - rustc
+  - sqlite3
+  - zlib1g-dev

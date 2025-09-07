@@ -1,0 +1,11 @@
+---
+
+- block:
+
+    - name: install shell utils
+      ansible.builtin.package:
+        name: "{{ workstation_shell_utils_packages }}"
+        state: present
+      become: yes
+
+  when: want_workstation_shell_utils
