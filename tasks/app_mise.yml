@@ -1,2 +1,68 @@
 ---
 
+- block:
+
+    - name: check current mise
+      ansible.builtin.stat:
+        path: "{{ workstation_mise_local_bin }}"
+      register: t_workstation_mise_local_bin
+
+    - block:
+
+        - name: get latest mise version from GitHub API
+          ansible.builtin.uri:
+            url: "{{ workstation_mise_github_api_url }}"
+            return_content: yes
+          register: t_workstation_mise_github_latest_release
+          changed_when: no
+
+        - name: extract latest mise version
+          ansible.builtin.set_fact:
+            workstation_mise_version: "{{ (t_workstation_mise_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_mise_version is not defined or workstation_mise_version == ""
+
+    - block:
+
+        - name: get current mise version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_mise_local_bin }} --version | sed -e 's/^\\([0-9][^ ]*\\) .*/\\1/g'"
+          register: t_workstation_mise_current_version
+          changed_when: no
+
+      when: t_workstation_mise_local_bin.stat.exists
+
+    - block:
+
+        - name: download mise archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_mise_github_download_url }}"
+            dest: "/tmp/mise.tar.gz"
+            mode: '0644'
+
+        - name: extract mise archive
+          ansible.builtin.unarchive:
+            src: "/tmp/mise.tar.gz"
+            dest: "/tmp"
+            creates: "/tmp/mise"
+
+        - name: "install mise binary to {{ workstation_mise_local_bin }}"
+          ansible.builtin.copy:
+            src: "/tmp/mise/bin/mise"
+            dest: "{{ workstation_mise_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /tmp/mise.tar.gz
+            - /tmp/mise
+
+      when: not t_workstation_mise_local_bin.stat.exists or (t_workstation_mise_current_version is defined and t_workstation_mise_current_version.stdout != workstation_mise_version)
+
+  when: want_workstation_mise
