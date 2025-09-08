@@ -2,9 +2,11 @@
 
 want_workstation_lazygit: yes
 
+# workstation_lazygit_version:
+
 workstation_lazygit_github_repo: jesseduffield/lazygit
-workstation_lazygit_github_api_url: "https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
-workstation_lazygit_github_download_url: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_{{ workstation_lazygit_version }}_Linux_x86_64.tar.gz"
+workstation_lazygit_github_api_url: "https://api.github.com/repos/{{ workstation_lazygit_github_repo }}/releases/latest"
+workstation_lazygit_github_download_url: "https://github.com/{{ workstation_lazygit_github_repo }}/releases/latest/download/lazygit_{{ workstation_lazygit_version }}_Linux_x86_64.tar.gz"
 workstation_lazygit_local_dir: "{{ workstation_local_dir }}"
 workstation_lazygit_local_bin_dir: "{{ workstation_lazygit_local_dir }}/bin"
 workstation_lazygit_local_bin: "{{ workstation_lazygit_local_bin_dir }}/lazygit"
