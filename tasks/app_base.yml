@@ -1,0 +1,9 @@
+---
+
+- block:
+
+    - name: install base
+      ansible.builtin.package:
+        name: "{{ workstation_base_packages }}"
+        state: present
+      become: yes

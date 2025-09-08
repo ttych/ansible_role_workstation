@@ -1,0 +1,6 @@
+---
+
+workstation_base_packages:
+  - gpg
+  - wget
+  - curl

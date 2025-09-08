@@ -1,5 +1,7 @@
 ---
 
+- include_tasks: app_base.yml
+
 - include_tasks: app_dev_libraries.yml
 
 - include_tasks: app_gum.yml
@@ -17,3 +19,7 @@
 - include_tasks: app_lazygit.yml
 
 - include_tasks: app_shell_utils.yml
+
+- include_tasks: app_docker.yml
+
+- include_tasks: app_mise.yml
