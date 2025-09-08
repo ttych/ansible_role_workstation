@@ -11,7 +11,7 @@
 
         - name: get latest lazydocker version from GitHub API
           ansible.builtin.uri:
-            url: https://api.github.com/repos/jesseduffield/lazydocker/releases/latest
+            url: "{{ workstation_lazydocker_github_api_url }}"
             return_content: yes
           register: t_workstation_lazydocker_github_latest_release
           changed_when: no

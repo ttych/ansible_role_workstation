@@ -11,7 +11,7 @@
 
         - name: get latest lazygit version from GitHub API
           ansible.builtin.uri:
-            url: https://api.github.com/repos/jesseduffield/lazygit/releases/latest
+            url: "{{ workstation_lazygit_github_api_url }}"
             return_content: yes
           register: t_workstation_lazygit_github_latest_release
           changed_when: no
