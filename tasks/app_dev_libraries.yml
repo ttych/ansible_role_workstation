@@ -1,0 +1,11 @@
+---
+
+- block:
+
+    - name: install base
+      ansible.builtin.package:
+        name: "{{ workstation_dev_libraries }}"
+        state: present
+      become: yes
+
+  when: want_workstation_dev_libraries
