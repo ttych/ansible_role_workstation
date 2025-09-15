@@ -44,6 +44,7 @@
           ansible.builtin.unarchive:
             src: "/tmp/mise.tar.gz"
             dest: "/tmp"
+            remote_src: yes
             creates: "/tmp/mise"
 
         - name: "install mise binary to {{ workstation_mise_local_bin }}"

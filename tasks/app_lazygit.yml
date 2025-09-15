@@ -44,6 +44,7 @@
           ansible.builtin.unarchive:
             src: "/tmp/lazygit.tar.gz"
             dest: "/tmp"
+            remote_src: yes
             creates: "/tmp/lazygit"
 
         - name: "install lazygit binary to {{ workstation_lazygit_local_bin }}"

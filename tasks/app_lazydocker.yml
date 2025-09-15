@@ -44,6 +44,7 @@
           ansible.builtin.unarchive:
             src: "/tmp/lazydocker.tar.gz"
             dest: "/tmp"
+            remote_src: yes
             creates: "/tmp/lazydocker"
 
         - name: "install lazydocker binary to {{ workstation_lazydocker_local_bin }}"
