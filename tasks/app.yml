@@ -20,6 +20,4 @@
 
 - include_tasks: app_shell_utils.yml
 
-- include_tasks: app_docker.yml
-
 - include_tasks: app_mise.yml

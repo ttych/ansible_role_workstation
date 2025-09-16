@@ -1,0 +1,4 @@
+---
+
+apt_sources_list_d: /etc/apt/sources.list.d
+apt_keyring_directory: /etc/apt/keyrings
