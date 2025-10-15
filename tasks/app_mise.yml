@@ -37,19 +37,19 @@
         - name: download mise archive
           ansible.builtin.get_url:
             url: "{{ workstation_mise_github_download_url }}"
-            dest: "/tmp/mise.tar.gz"
+            dest: "{{ workstation_tmp_dir }}/mise.tar.gz"
             mode: '0644'
 
         - name: extract mise archive
           ansible.builtin.unarchive:
-            src: "/tmp/mise.tar.gz"
-            dest: "/tmp"
+            src: "{{ workstation_tmp_dir }}/mise.tar.gz"
+            dest: "{{ workstation_tmp_dir }}"
             remote_src: yes
-            creates: "/tmp/mise"
+            creates: "{{ workstation_tmp_dir }}/mise"
 
         - name: "install mise binary to {{ workstation_mise_local_bin }}"
           ansible.builtin.copy:
-            src: "/tmp/mise/bin/mise"
+            src: "{{ workstation_tmp_dir }}/mise/bin/mise"
             dest: "{{ workstation_mise_local_bin }}"
             mode: '0755'
             owner: root
@@ -61,8 +61,8 @@
             path: "{{ item }}"
             state: absent
           loop:
-            - /tmp/mise.tar.gz
-            - /tmp/mise
+            - "{{ workstation_tmp_dir }}/mise.tar.gz"
+            - "{{ workstation_tmp_dir }}/mise"
 
       when: not t_workstation_mise_local_bin.stat.exists or (t_workstation_mise_current_version is defined and t_workstation_mise_current_version.stdout != workstation_mise_version)
 

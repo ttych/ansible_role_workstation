@@ -37,19 +37,19 @@
         - name: download lazygit archive
           ansible.builtin.get_url:
             url: "{{ workstation_lazygit_github_download_url }}"
-            dest: "/tmp/lazygit.tar.gz"
+            dest: "{{ workstation_tmp_dir }}/lazygit.tar.gz"
             mode: '0644'
 
         - name: extract lazygit archive
           ansible.builtin.unarchive:
-            src: "/tmp/lazygit.tar.gz"
-            dest: "/tmp"
+            src: "{{ workstation_tmp_dir }}/lazygit.tar.gz"
+            dest: "{{ workstation_tmp_dir }}"
             remote_src: yes
-            creates: "/tmp/lazygit"
+            creates: "{{ workstation_tmp_dir }}/lazygit"
 
         - name: "install lazygit binary to {{ workstation_lazygit_local_bin }}"
           ansible.builtin.copy:
-            src: /tmp/lazygit
+            src: "{{ workstation_tmp_dir }}/lazygit"
             dest: "{{ workstation_lazygit_local_bin }}"
             mode: '0755'
             owner: root
@@ -61,10 +61,10 @@
             path: "{{ item }}"
             state: absent
           loop:
-            - /tmp/lazygit.tar.gz
-            - /tmp/lazygit
-            - /tmp/README.md
-            - /tmp/LICENSE
+            - "{{ workstation_tmp_dir }}/lazygit.tar.gz"
+            - "{{ workstation_tmp_dir }}/lazygit"
+            - "{{ workstation_tmp_dir }}/README.md"
+            - "{{ workstation_tmp_dir }}/LICENSE"
 
       when: not t_workstation_lazygit_local_bin.stat.exists or (t_workstation_lazygit_current_version is defined and t_workstation_lazygit_current_version.stdout != workstation_lazygit_version)
 

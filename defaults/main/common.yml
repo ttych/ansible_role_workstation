@@ -1,0 +1,7 @@
+---
+
+workstation_architecture_alt:
+  x86_64: amd64
+
+workstation_tmp_dir: /tmp
+workstation_tmphuge_dir: /var/tmp

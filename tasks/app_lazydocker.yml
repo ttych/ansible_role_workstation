@@ -37,19 +37,19 @@
         - name: download lazydocker archive
           ansible.builtin.get_url:
             url: "{{ workstation_lazydocker_github_download_url }}"
-            dest: "/tmp/lazydocker.tar.gz"
+            dest: "{{ workstation_tmp_dir }}/lazydocker.tar.gz"
             mode: '0644'
 
         - name: extract lazydocker archive
           ansible.builtin.unarchive:
-            src: "/tmp/lazydocker.tar.gz"
-            dest: "/tmp"
+            src: "{{ workstation_tmp_dir }}/lazydocker.tar.gz"
+            dest: "{{ workstation_tmp_dir }}"
             remote_src: yes
-            creates: "/tmp/lazydocker"
+            creates: "{{ workstation_tmp_dir }}/lazydocker"
 
         - name: "install lazydocker binary to {{ workstation_lazydocker_local_bin }}"
           ansible.builtin.copy:
-            src: /tmp/lazydocker
+            src: "{{ workstation_tmp_dir }}/lazydocker"
             dest: "{{ workstation_lazydocker_local_bin }}"
             mode: '0755'
             owner: root
@@ -61,10 +61,10 @@
             path: "{{ item }}"
             state: absent
           loop:
-            - /tmp/lazydocker.tar.gz
-            - /tmp/lazydocker
-            - /tmp/README.md
-            - /tmp/LICENSE
+            - "{{ workstation_tmp_dir }}/lazydocker.tar.gz"
+            - "{{ workstation_tmp_dir }}/lazydocker"
+            - "{{ workstation_tmp_dir }}/README.md"
+            - "{{ workstation_tmp_dir }}/LICENSE"
 
       when: not t_workstation_lazydocker_local_bin.stat.exists or (t_workstation_lazydocker_current_version is defined and t_workstation_lazydocker_current_version.stdout != workstation_lazydocker_version)
 

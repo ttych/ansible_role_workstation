@@ -12,11 +12,11 @@
         - name: download geekbench
           ansible.builtin.get_url:
             url: "{{ workstation_geekbench_url }}"
-            dest: "/tmp/{{ workstation_geekbench_archive_name }}.tar.gz"
+            dest: "{{ workstation_tmp_dir }}/{{ workstation_geekbench_archive_name }}.tar.gz"
 
         - name: extract archive
           ansible.builtin.unarchive:
-            src: "/tmp/{{ workstation_geekbench_archive_name }}.tar.gz"
+            src: "{{ workstation_tmp_dir }}/{{ workstation_geekbench_archive_name }}.tar.gz"
             dest: "{{ workstation_geekbench_local_dir }}"
             owner: root
             group: root
@@ -27,7 +27,7 @@
             path: "{{ item }}"
             state: absent
           loop:
-            - "/tmp/{{ workstation_geekbench_archive_name }}.tar.gz"
+            - "{{ workstation_tmp_dir }}/{{ workstation_geekbench_archive_name }}.tar.gz"
 
       when: not t_workstation_geekbench_bin.stat.exists
 
