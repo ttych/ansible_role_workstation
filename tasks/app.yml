@@ -21,3 +21,5 @@
 - include_tasks: app_shell_utils.yml
 
 - include_tasks: app_mise.yml
+
+- include_tasks: app_vscode.yml

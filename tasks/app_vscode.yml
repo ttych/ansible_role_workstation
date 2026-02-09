@@ -1,0 +1,21 @@
+---
+
+- block:
+
+    - name: Add Microsoft repository using key from URL
+      deb822_repository:
+        name: vscode
+        types: deb
+        uris: "{{ workstation_vscode_microsoft_package_url }}"
+        suites: stable
+        components: main
+        architectures: amd64,arm64,armhf
+        signed_by: "{{ workstation_vscode_microsoft_keys_url }}"
+
+    - name: Install Visual Studio Code
+      package:
+        name: "{{ workstation_vscode_package }}"
+        state: latest
+        update_cache: yes
+
+  when: want_workstation_vscode
