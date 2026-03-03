@@ -2,18 +2,60 @@
 
 - block:
 
+    - name: stat microsoft gpg key file
+      ansible.builtin.stat:
+        path: "{{ workstation_vscode_microsoft_keys_filepath }}"
+      register: t_workstation_vscode_microsoft_keys_filepath
+
+    - block:
+
+        - name: Download Microsoft GPG key
+          ansible.builtin.get_url:
+            url: "{{ workstation_vscode_microsoft_keys_url }}"
+            dest: /tmp/microsoft.asc
+            mode: '0644'
+
+        - name: Ensure /usr/share/keyrings/ directory exists
+          ansible.builtin.file:
+            path: "{{ workstation_vscode_microsoft_keys_dir }}"
+            state: directory
+            owner: root
+            group: root
+            mode: '0755'
+
+        - name: Deploy key as microsoft.gpg
+          ansible.builtin.shell:
+            cmd: "gpg --dearmor -o '{{ workstation_vscode_microsoft_keys_filepath }}' /tmp/microsoft.asc"
+            creates: "{{ workstation_vscode_microsoft_keys_filepath }}"
+
+        - name: Set permissions
+          ansible.builtin.file:
+            path: "{{ workstation_vscode_microsoft_keys_filepath }}"
+            mode: '0644'
+            owner: root
+            group: root
+
+        - name: Clean up temporary file
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /tmp/microsoft.asc
+
+      when: not t_workstation_vscode_microsoft_keys_filepath.stat.exists
+
     - name: Add Microsoft repository using key from URL
-      deb822_repository:
+      ansible.builtin.deb822_repository:
         name: vscode
         types: deb
         uris: "{{ workstation_vscode_microsoft_package_url }}"
         suites: stable
         components: main
         architectures: amd64,arm64,armhf
-        signed_by: "{{ workstation_vscode_microsoft_keys_url }}"
+        signed_by: "{{ workstation_vscode_microsoft_keys_filepath }}"
 
     - name: Install Visual Studio Code
-      package:
+      ansible.builtin.package:
         name: "{{ workstation_vscode_package }}"
         state: latest
         update_cache: yes

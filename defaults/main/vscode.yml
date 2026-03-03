@@ -4,6 +4,8 @@ want_workstation_vscode: yes
 
 workstation_vscode_microsoft_package_url: https://packages.microsoft.com/repos/code
 workstation_vscode_microsoft_keys_url: https://packages.microsoft.com/keys/microsoft.asc
+workstation_vscode_microsoft_keys_dir: /usr/share/keyrings
+workstation_vscode_microsoft_keys_filepath: "{{ workstation_vscode_microsoft_keys_dir }}/microsoft.gpg"
 
 workstation_vscode_pkg_dev_url: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
 
