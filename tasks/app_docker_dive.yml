@@ -1,0 +1,72 @@
+---
+
+- block:
+
+    - name: check current docker_dive
+      ansible.builtin.stat:
+        path: "{{ workstation_docker_dive_local_bin }}"
+      register: t_workstation_docker_dive_local_bin
+
+    - block:
+
+        - name: get latest docker_dive version from GitHub API
+          ansible.builtin.uri:
+            url: "{{ workstation_docker_dive_github_api_url }}"
+            return_content: yes
+          register: t_workstation_docker_dive_github_latest_release
+          changed_when: no
+
+        - name: extract latest docker_dive version
+          ansible.builtin.set_fact:
+            workstation_docker_dive_version: "{{ (t_workstation_docker_dive_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_docker_dive_version is not defined or workstation_docker_dive_version == ""
+
+    - block:
+
+        - name: get current docker_dive version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_docker_dive_local_bin }} --version | sed -e 's/^dive \\([0-9.]*\\)/\\1/g'"
+          register: t_workstation_docker_dive_current_version
+          changed_when: no
+
+      when: t_workstation_docker_dive_local_bin.stat.exists
+
+    - block:
+
+        - name: download docker_dive archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_docker_dive_github_download_url }}"
+            dest: "{{ system_tmp_dir }}/docker_dive.tar.gz"
+            mode: '0644'
+
+        - name: extract docker_dive archive
+          ansible.builtin.unarchive:
+            src: "{{ system_tmp_dir }}/docker_dive.tar.gz"
+            dest: "{{ system_tmp_dir }}"
+            remote_src: yes
+            creates: "{{ system_tmp_dir }}/{{ workstation_docker_dive_name }}"
+
+        - name: "install docker_dive binary to {{ workstation_docker_dive_local_bin }}"
+          ansible.builtin.copy:
+            src: "{{ system_tmp_dir }}/{{ workstation_docker_dive_name }}"
+            dest: "{{ workstation_docker_dive_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - "{{ system_tmp_dir }}/docker_dive.tar.gz"
+            - "{{ system_tmp_dir }}/{{ workstation_docker_dive_name }}"
+            - "{{ system_tmp_dir }}/README.md"
+            - "{{ system_tmp_dir }}/CHANGELOG.md"
+            - "{{ system_tmp_dir }}/LICENSE"
+
+      when: not t_workstation_docker_dive_local_bin.stat.exists or (t_workstation_docker_dive_current_version is defined and t_workstation_docker_dive_current_version.stdout != workstation_docker_dive_version)
+
+  when: want_workstation_docker_dive

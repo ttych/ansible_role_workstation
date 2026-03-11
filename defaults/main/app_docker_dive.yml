@@ -1,0 +1,13 @@
+---
+
+want_workstation_docker_dive: yes
+
+# workstation_docker_dive_version:
+
+workstation_docker_dive_name: dive
+workstation_docker_dive_github_repo: wagoodman/dive
+workstation_docker_dive_github_api_url: "https://api.github.com/repos/{{ workstation_docker_dive_github_repo }}/releases/latest"
+workstation_docker_dive_github_download_url: "https://github.com/{{ workstation_docker_dive_github_repo }}/releases/download/v{{ workstation_docker_dive_version }}/{{ workstation_docker_dive_name }}_{{ workstation_docker_dive_version }}_{{ ansible_facts.system | lower }}_{{ workstation_architecture_alt[ansible_facts.architecture] }}.tar.gz"
+workstation_docker_dive_local_dir: "{{ workstation_local_dir }}"
+workstation_docker_dive_local_bin_dir: "{{ workstation_docker_dive_local_dir }}/bin"
+workstation_docker_dive_local_bin: "{{ workstation_docker_dive_local_bin_dir }}/{{ workstation_docker_dive_name }}"

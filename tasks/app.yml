@@ -18,6 +18,10 @@
 
 - include_tasks: app_lazygit.yml
 
+- include_tasks: app_docker_dive.yml
+
+- include_tasks: app_k9s.yml
+
 - include_tasks: app_shell_utils.yml
 
 - include_tasks: app_mise.yml
