@@ -4,12 +4,13 @@ want_workstation_mise: yes
 
 # workstation_mise_version:
 
+workstation_mise_name: mise
 workstation_mise_github_repo: jdx/mise
 workstation_mise_github_api_url: "https://api.github.com/repos/{{ workstation_mise_github_repo }}/releases/latest"
-workstation_mise_github_download_url: "https://github.com/{{ workstation_mise_github_repo }}/releases/download/v{{ workstation_mise_version }}/mise-v{{ workstation_mise_version }}-{{ ansible_facts['system'] | lower }}-{{ workstation_mise_architectures[ansible_facts['architecture']] }}.tar.gz"
+workstation_mise_github_download_url: "https://github.com/{{ workstation_mise_github_repo }}/releases/download/v{{ workstation_mise_version }}/{{ workstation_mise_name }}-v{{ workstation_mise_version }}-{{ ansible_facts.system | lower }}-{{ workstation_mise_architectures[ansible_facts.architecture] }}.tar.gz"
 workstation_mise_local_dir: "{{ workstation_local_dir }}"
 workstation_mise_local_bin_dir: "{{ workstation_mise_local_dir }}/bin"
-workstation_mise_local_bin: "{{ workstation_mise_local_bin_dir }}/mise"
+workstation_mise_local_bin: "{{ workstation_mise_local_bin_dir }}/{{ workstation_mise_name }}"
 
 workstation_mise_architectures:
   x86_64: x64

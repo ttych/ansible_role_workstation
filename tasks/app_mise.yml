@@ -45,11 +45,11 @@
             src: "{{ workstation_tmp_dir }}/mise.tar.gz"
             dest: "{{ workstation_tmp_dir }}"
             remote_src: yes
-            creates: "{{ workstation_tmp_dir }}/mise"
+            creates: "{{ workstation_tmp_dir }}/{{ workstation_mise_name }}"
 
         - name: "install mise binary to {{ workstation_mise_local_bin }}"
           ansible.builtin.copy:
-            src: "{{ workstation_tmp_dir }}/mise/bin/mise"
+            src: "{{ workstation_tmp_dir }}/{{ workstation_mise_name }}/bin/{{ workstation_mise_name }}"
             dest: "{{ workstation_mise_local_bin }}"
             mode: '0755'
             owner: root
@@ -62,7 +62,7 @@
             state: absent
           loop:
             - "{{ workstation_tmp_dir }}/mise.tar.gz"
-            - "{{ workstation_tmp_dir }}/mise"
+            - "{{ workstation_tmp_dir }}/{{ workstation_mise_name }}"
 
       when: not t_workstation_mise_local_bin.stat.exists or (t_workstation_mise_current_version is defined and t_workstation_mise_current_version.stdout != workstation_mise_version)
 
