@@ -1,0 +1,13 @@
+---
+
+want_workstation_k9s: yes
+
+# workstation_k9s_version:
+
+workstation_k9s_name: k9s
+workstation_k9s_github_repo: derailed/k9s
+workstation_k9s_github_api_url: "https://api.github.com/repos/{{ workstation_k9s_github_repo }}/releases/latest"
+workstation_k9s_github_download_url: "https://github.com/{{ workstation_k9s_github_repo }}/releases/download/v{{ workstation_k9s_version }}/{{ workstation_k9s_name }}_{{ ansible_facts.system }}_{{ workstation_architecture_alt[ansible_facts.architecture] }}.tar.gz"
+workstation_k9s_local_dir: "{{ workstation_local_dir }}"
+workstation_k9s_local_bin_dir: "{{ workstation_k9s_local_dir }}/bin"
+workstation_k9s_local_bin: "{{ workstation_k9s_local_bin_dir }}/{{ workstation_k9s_name }}"

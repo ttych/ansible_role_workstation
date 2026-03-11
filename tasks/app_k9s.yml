@@ -1,0 +1,72 @@
+---
+
+- block:
+
+    - name: check current k9s
+      ansible.builtin.stat:
+        path: "{{ workstation_k9s_local_bin }}"
+      register: t_workstation_k9s_local_bin
+
+    - block:
+
+        - name: get latest k9s version from GitHub API
+          ansible.builtin.uri:
+            url: "{{ workstation_k9s_github_api_url }}"
+            return_content: yes
+          register: t_workstation_k9s_github_latest_release
+          changed_when: no
+
+        - name: extract latest k9s version
+          ansible.builtin.set_fact:
+            workstation_k9s_version: "{{ (t_workstation_k9s_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_k9s_version is not defined or workstation_k9s_version == ""
+
+    - block:
+
+        - name: get current k9s version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_k9s_local_bin }} version | sed -n 's/.*v\\([0-9.]*\\).*/\\1/p'"
+          register: t_workstation_k9s_current_version
+          changed_when: no
+
+      when: t_workstation_k9s_local_bin.stat.exists
+
+    - block:
+
+        - name: download k9s archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_k9s_github_download_url }}"
+            dest: "{{ system_tmp_dir }}/k9s.tar.gz"
+            mode: '0644'
+
+        - name: extract k9s archive
+          ansible.builtin.unarchive:
+            src: "{{ system_tmp_dir }}/k9s.tar.gz"
+            dest: "{{ system_tmp_dir }}"
+            remote_src: yes
+            creates: "{{ system_tmp_dir }}/{{ workstation_k9s_name }}"
+
+        - name: "install k9s binary to {{ workstation_k9s_local_bin }}"
+          ansible.builtin.copy:
+            src: "{{ system_tmp_dir }}/{{ workstation_k9s_name }}"
+            dest: "{{ workstation_k9s_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - "{{ system_tmp_dir }}/k9s.tar.gz"
+            - "{{ system_tmp_dir }}/{{ workstation_k9s_name }}"
+            - "{{ system_tmp_dir }}/README.md"
+            - "{{ system_tmp_dir }}/CHANGELOG.md"
+            - "{{ system_tmp_dir }}/LICENSE"
+
+      when: not t_workstation_k9s_local_bin.stat.exists or (t_workstation_k9s_current_version is defined and t_workstation_k9s_current_version.stdout != workstation_k9s_version)
+
+  when: want_workstation_k9s
