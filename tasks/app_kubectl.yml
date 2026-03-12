@@ -1,0 +1,55 @@
+---
+
+- block:
+
+    - name: check current kubectl
+      ansible.builtin.stat:
+        path: "{{ workstation_kubectl_local_bin }}"
+      register: t_workstation_kubectl_local_bin
+
+    - block:
+
+        - name: get latest kubectl version
+          ansible.builtin.uri:
+            url: "{{ workstation_kubectl_latest_version_url }}"
+            return_content: yes
+          register: t_workstation_kubectl_latest_version
+          changed_when: no
+
+        - name: extract latest kubectl version
+          ansible.builtin.set_fact:
+            workstation_kubectl_version: "{{ t_workstation_kubectl_latest_version.content | replace('v', '') }}"
+
+      when: workstation_kubectl_version is not defined or workstation_kubectl_version == ""
+
+    - block:
+
+        - name: get current kubectl version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_kubectl_local_bin }} version | sed -n 's/^.*Client Version:\\sv\\([0-9.]*\\).*$/\\1/p'"
+          register: t_workstation_kubectl_current_version
+          changed_when: no
+
+      when: t_workstation_kubectl_local_bin.stat.exists
+
+    - block:
+
+        - name: "download {{ workstation_kubectl_name }} bin"
+          ansible.builtin.get_url:
+            url: "{{ workstation_kubectl_download_url }}"
+            dest: "{{ workstation_kubectl_local_bin }}"
+            owner: root
+            group: root
+            mode: '0755'
+
+        - name: "download {{ workstation_kubectl_convert_name }} bin"
+          ansible.builtin.get_url:
+            url: "{{ workstation_kubectl_convert_download_url }}"
+            dest: "{{ workstation_kubectl_convert_local_bin }}"
+            owner: root
+            group: root
+            mode: '0755'
+
+      when: not t_workstation_kubectl_local_bin.stat.exists or (t_workstation_kubectl_current_version is defined and t_workstation_kubectl_current_version.stdout != workstation_kubectl_version)
+
+  when: want_workstation_kubectl

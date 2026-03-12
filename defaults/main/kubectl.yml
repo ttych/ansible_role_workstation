@@ -1,0 +1,18 @@
+---
+
+want_workstation_kubectl: yes
+
+# workstation_kubectl_version:
+
+workstation_kubectl_latest_version_url: https://dl.k8s.io/release/stable.txt
+workstation_kubectl_local_dir: "{{ workstation_local_dir }}"
+workstation_kubectl_local_bin_dir: "{{ workstation_kubectl_local_dir }}/bin"
+
+workstation_kubectl_name: kubectl
+workstation_kubectl_local_bin: "{{ workstation_kubectl_local_bin_dir }}/{{ workstation_kubectl_name }}"
+workstation_kubectl_download_url: "https://dl.k8s.io/release/v{{ workstation_kubectl_version }}/bin/{{ ansible_facts.system | lower }}/{{ workstation_architecture_alt[ansible_facts.architecture] }}/{{ workstation_kubectl_name }}"
+
+workstation_kubectl_convert_name: kubectl-convert
+workstation_kubectl_convert_local_bin: "{{ workstation_kubectl_local_bin_dir }}/{{ workstation_kubectl_convert_name }}"
+workstation_kubectl_convert_download_url: "https://dl.k8s.io/release/v{{ workstation_kubectl_version }}/bin/{{ ansible_facts.system | lower }}/{{ workstation_architecture_alt[ansible_facts.architecture] }}/{{ workstation_kubectl_convert_name }}"
+

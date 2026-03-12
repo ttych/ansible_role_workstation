@@ -22,6 +22,8 @@
 
 - include_tasks: app_k9s.yml
 
+- include_tasks: app_kubectl.yml
+
 - include_tasks: app_shell_utils.yml
 
 - include_tasks: app_mise.yml
