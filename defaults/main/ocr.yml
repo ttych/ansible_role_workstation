@@ -1,0 +1,9 @@
+---
+
+want_workstation_ocr: yes
+
+workstation_ocr_packages:
+  - tesseract-ocr
+  - tesseract-ocr-eng
+  - tesseract-ocr-fra
+  - tesseract-ocr-frm

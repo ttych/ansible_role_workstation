@@ -1,0 +1,10 @@
+---
+
+- block:
+
+    - name: install ocr packages
+      ansible.builtin.package:
+        name: "{{ workstation_ocr_packages }}"
+        state: present
+
+  when: want_workstation_ocr

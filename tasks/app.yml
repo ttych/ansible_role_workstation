@@ -29,3 +29,5 @@
 - include_tasks: app_mise.yml
 
 - include_tasks: app_vscode.yml
+
+- include_tasks: app_ocr.yml
