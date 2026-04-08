@@ -12,3 +12,4 @@ workstation_shell_utils_packages:
   - apache2-utils
   - fd-find             # (find)
   - tealdeer            # (tldr)
+  - hyperfine           # (benchmark)
