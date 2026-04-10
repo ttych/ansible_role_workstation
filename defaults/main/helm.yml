@@ -1,0 +1,13 @@
+---
+
+want_workstation_helm: yes
+
+# workstation_helm_version:
+
+workstation_helm_name: helm
+workstation_helm_github_repo: helm/helm
+workstation_helm_github_api_url: "https://api.github.com/repos/{{ workstation_helm_github_repo }}/releases/latest"
+workstation_helm_github_download_url: "https://get.helm.sh/{{ workstation_helm_name }}-v{{ workstation_helm_version }}-{{ ansible_facts.system | lower }}-{{ workstation_architecture_alt[ansible_facts.architecture] }}.tar.gz"
+workstation_helm_local_dir: "{{ workstation_local_dir }}"
+workstation_helm_local_bin_dir: "{{ workstation_helm_local_dir }}/bin"
+workstation_helm_local_bin: "{{ workstation_helm_local_bin_dir }}/{{ workstation_helm_name }}"

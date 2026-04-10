@@ -18,6 +18,8 @@
 
 - include_tasks: app_gum.yml
 
+- include_tasks: app_helm.yml
+
 - include_tasks: app_k9s.yml
 
 - include_tasks: app_kind.yml

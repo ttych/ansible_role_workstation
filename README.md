@@ -14,6 +14,8 @@ Deploy important workstation applications.
 
 ### gh (github cli)
 
+### helm (kube)
+
 ### act (github actions)
 
 ### gum
