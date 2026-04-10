@@ -37,19 +37,19 @@
         - name: download k9s archive
           ansible.builtin.get_url:
             url: "{{ workstation_k9s_github_download_url }}"
-            dest: "{{ system_tmp_dir }}/k9s.tar.gz"
+            dest: "{{ workstation_tmp_dir }}/k9s.tar.gz"
             mode: '0644'
 
         - name: extract k9s archive
           ansible.builtin.unarchive:
-            src: "{{ system_tmp_dir }}/k9s.tar.gz"
-            dest: "{{ system_tmp_dir }}"
+            src: "{{ workstation_tmp_dir }}/k9s.tar.gz"
+            dest: "{{ workstation_tmp_dir }}"
             remote_src: yes
-            creates: "{{ system_tmp_dir }}/{{ workstation_k9s_name }}"
+            creates: "{{ workstation_tmp_dir }}/{{ workstation_k9s_name }}"
 
         - name: "install k9s binary to {{ workstation_k9s_local_bin }}"
           ansible.builtin.copy:
-            src: "{{ system_tmp_dir }}/{{ workstation_k9s_name }}"
+            src: "{{ workstation_tmp_dir }}/{{ workstation_k9s_name }}"
             dest: "{{ workstation_k9s_local_bin }}"
             mode: '0755'
             owner: root
@@ -61,11 +61,11 @@
             path: "{{ item }}"
             state: absent
           loop:
-            - "{{ system_tmp_dir }}/k9s.tar.gz"
-            - "{{ system_tmp_dir }}/{{ workstation_k9s_name }}"
-            - "{{ system_tmp_dir }}/README.md"
-            - "{{ system_tmp_dir }}/CHANGELOG.md"
-            - "{{ system_tmp_dir }}/LICENSE"
+            - "{{ workstation_tmp_dir }}/k9s.tar.gz"
+            - "{{ workstation_tmp_dir }}/{{ workstation_k9s_name }}"
+            - "{{ workstation_tmp_dir }}/README.md"
+            - "{{ workstation_tmp_dir }}/CHANGELOG.md"
+            - "{{ workstation_tmp_dir }}/LICENSE"
 
       when: not t_workstation_k9s_local_bin.stat.exists or (t_workstation_k9s_current_version is defined and t_workstation_k9s_current_version.stdout != workstation_k9s_version)
 

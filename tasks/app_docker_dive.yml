@@ -37,19 +37,19 @@
         - name: download docker_dive archive
           ansible.builtin.get_url:
             url: "{{ workstation_docker_dive_github_download_url }}"
-            dest: "{{ system_tmp_dir }}/docker_dive.tar.gz"
+            dest: "{{ workstation_tmp_dir }}/docker_dive.tar.gz"
             mode: '0644'
 
         - name: extract docker_dive archive
           ansible.builtin.unarchive:
-            src: "{{ system_tmp_dir }}/docker_dive.tar.gz"
-            dest: "{{ system_tmp_dir }}"
+            src: "{{ workstation_tmp_dir }}/docker_dive.tar.gz"
+            dest: "{{ workstation_tmp_dir }}"
             remote_src: yes
-            creates: "{{ system_tmp_dir }}/{{ workstation_docker_dive_name }}"
+            creates: "{{ workstation_tmp_dir }}/{{ workstation_docker_dive_name }}"
 
         - name: "install docker_dive binary to {{ workstation_docker_dive_local_bin }}"
           ansible.builtin.copy:
-            src: "{{ system_tmp_dir }}/{{ workstation_docker_dive_name }}"
+            src: "{{ workstation_tmp_dir }}/{{ workstation_docker_dive_name }}"
             dest: "{{ workstation_docker_dive_local_bin }}"
             mode: '0755'
             owner: root
@@ -61,11 +61,11 @@
             path: "{{ item }}"
             state: absent
           loop:
-            - "{{ system_tmp_dir }}/docker_dive.tar.gz"
-            - "{{ system_tmp_dir }}/{{ workstation_docker_dive_name }}"
-            - "{{ system_tmp_dir }}/README.md"
-            - "{{ system_tmp_dir }}/CHANGELOG.md"
-            - "{{ system_tmp_dir }}/LICENSE"
+            - "{{ workstation_tmp_dir }}/docker_dive.tar.gz"
+            - "{{ workstation_tmp_dir }}/{{ workstation_docker_dive_name }}"
+            - "{{ workstation_tmp_dir }}/README.md"
+            - "{{ workstation_tmp_dir }}/CHANGELOG.md"
+            - "{{ workstation_tmp_dir }}/LICENSE"
 
       when: not t_workstation_docker_dive_local_bin.stat.exists or (t_workstation_docker_dive_current_version is defined and t_workstation_docker_dive_current_version.stdout != workstation_docker_dive_version)
 
