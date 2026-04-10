@@ -1,0 +1,13 @@
+---
+
+want_workstation_kind: yes
+
+# workstation_kind_version:
+
+workstation_kind_name: kind
+workstation_kind_github_repo: kubernetes-sigs/kind
+workstation_kind_github_api_url: "https://api.github.com/repos/{{ workstation_kind_github_repo }}/releases/latest"
+workstation_kind_github_download_url: "https://github.com/{{ workstation_kind_github_repo }}/releases/download/v{{ workstation_kind_version }}/{{ workstation_kind_name }}-{{ ansible_facts.system | lower }}-{{ workstation_architecture_alt[ansible_facts.architecture] }}"
+workstation_kind_local_dir: "{{ workstation_local_dir }}"
+workstation_kind_local_bin_dir: "{{ workstation_kind_local_dir }}/bin"
+workstation_kind_local_bin: "{{ workstation_kind_local_bin_dir }}/{{ workstation_kind_name }}"

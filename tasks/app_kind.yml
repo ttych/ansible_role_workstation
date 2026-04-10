@@ -1,0 +1,47 @@
+---
+
+- block:
+
+    - name: check current kind
+      ansible.builtin.stat:
+        path: "{{ workstation_kind_local_bin }}"
+      register: t_workstation_kind_local_bin
+
+    - block:
+
+        - name: get latest kind version from GitHub API
+          ansible.builtin.uri:
+            url: "{{ workstation_kind_github_api_url }}"
+            return_content: yes
+          register: t_workstation_kind_github_latest_release
+          changed_when: no
+
+        - name: extract latest kind version
+          ansible.builtin.set_fact:
+            workstation_kind_version: "{{ (t_workstation_kind_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_kind_version is not defined or workstation_kind_version == ""
+
+    - block:
+
+        - name: get current kind version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_kind_local_bin }} --version | sed -e 's/^[^0-9]*\\([0-9.]*\\).*$/\\1/g'"
+          register: t_workstation_kind_current_version
+          changed_when: no
+
+      when: t_workstation_kind_local_bin.stat.exists
+
+    - block:
+
+        - name: download kind archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_kind_github_download_url }}"
+            dest: "{{ workstation_kind_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+
+      when: not t_workstation_kind_local_bin.stat.exists or (t_workstation_kind_current_version is defined and t_workstation_kind_current_version.stdout != workstation_kind_version)
+
+  when: want_workstation_kind

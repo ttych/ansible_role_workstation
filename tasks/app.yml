@@ -2,34 +2,36 @@
 
 - include_tasks: app_base.yml
 
-- include_tasks: app_dev_libraries.yml
-
-- include_tasks: app_gum.yml
-
 - include_tasks: app_btop.yml
 
-- include_tasks: app_geekbench.yml
+- include_tasks: app_dev_libraries.yml
+
+- include_tasks: app_docker_dive.yml
 
 - include_tasks: app_fastfetch.yml
 
+- include_tasks: app_geekbench.yml
+
 - include_tasks: app_gh.yml
+
+- include_tasks: app_github_act.yml
+
+- include_tasks: app_gum.yml
+
+- include_tasks: app_k9s.yml
+
+- include_tasks: app_kind.yml
+
+- include_tasks: app_kubectl.yml
 
 - include_tasks: app_lazydocker.yml
 
 - include_tasks: app_lazygit.yml
 
-- include_tasks: app_docker_dive.yml
-
-- include_tasks: app_k9s.yml
-
-- include_tasks: app_kubectl.yml
-
-- include_tasks: app_shell_utils.yml
-
 - include_tasks: app_mise.yml
-
-- include_tasks: app_vscode.yml
 
 - include_tasks: app_ocr.yml
 
-- include_tasks: app_github_act.yml
+- include_tasks: app_shell_utils.yml
+
+- include_tasks: app_vscode.yml
