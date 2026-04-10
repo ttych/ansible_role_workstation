@@ -1,0 +1,72 @@
+---
+
+- block:
+
+    - name: check current github_act
+      ansible.builtin.stat:
+        path: "{{ workstation_github_act_local_bin }}"
+      register: t_workstation_github_act_local_bin
+
+    - block:
+
+        - name: get latest github_act version from GitHub API
+          ansible.builtin.uri:
+            url: "{{ workstation_github_act_github_api_url }}"
+            return_content: yes
+          register: t_workstation_github_act_github_latest_release
+          changed_when: no
+
+        - name: extract latest github_act version
+          ansible.builtin.set_fact:
+            workstation_github_act_version: "{{ (t_workstation_github_act_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_github_act_version is not defined or workstation_github_act_version == ""
+
+    - block:
+
+        - name: get current github_act version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_github_act_local_bin }} --version | sed -e 's/^[^0-9]*\\([0-9.]*\\).*$/\\1/g'"
+          register: t_workstation_github_act_current_version
+          changed_when: no
+
+      when: t_workstation_github_act_local_bin.stat.exists
+
+    - block:
+
+        - name: download github_act archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_github_act_github_download_url }}"
+            dest: "{{ workstation_tmp_dir }}/github_act.tar.gz"
+            mode: '0644'
+
+        - name: extract github_act archive
+          ansible.builtin.unarchive:
+            src: "{{ workstation_tmp_dir }}/github_act.tar.gz"
+            dest: "{{ workstation_tmp_dir }}"
+            remote_src: yes
+            creates: "{{ workstation_tmp_dir }}/{{ workstation_github_act_name }}"
+
+        - name: "install github_act binary to {{ workstation_github_act_local_bin }}"
+          ansible.builtin.copy:
+            src: "{{ workstation_tmp_dir }}/{{ workstation_github_act_name }}"
+            dest: "{{ workstation_github_act_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - "{{ workstation_tmp_dir }}/github_act.tar.gz"
+            - "{{ workstation_tmp_dir }}/{{ workstation_github_act_name }}"
+            - "{{ workstation_tmp_dir }}/README.md"
+            - "{{ workstation_tmp_dir }}/CHANGELOG.md"
+            - "{{ workstation_tmp_dir }}/LICENSE"
+
+      when: not t_workstation_github_act_local_bin.stat.exists or (t_workstation_github_act_current_version is defined and t_workstation_github_act_current_version.stdout != workstation_github_act_version)
+
+  when: want_workstation_github_act
