@@ -1,0 +1,19 @@
+---
+
+want_workstation_uv: yes
+
+# workstation_uv_version:
+
+workstation_uv_name: uv
+workstation_uv_github_repo: astral-sh/uv
+workstation_uv_github_api_latest_url: "https://api.github.com/repos/{{ workstation_uv_github_repo }}/releases/latest"
+# workstation_uv_github_download_url: "https://github.com/{{ workstation_uv_github_repo }}/releases/{{ workstation_uv_version }}/download/{{ workstation_uv_name }}-{{ ansible_facts.architecture }}-unknown-{{ ansible_facts.system | lower }}-gnu.tar.gz"
+workstation_uv_github_archive_name: "{{ workstation_uv_name }}-{{ ansible_facts.architecture }}-unknown-{{ ansible_facts.system | lower }}-gnu"
+workstation_uv_github_archive: "{{ workstation_uv_github_archive_name }}.tar.gz"
+workstation_uv_github_download_url: "https://github.com/{{ workstation_uv_github_repo }}/releases/download/{{ workstation_uv_version }}/{{ workstation_uv_github_archive }}"
+workstation_uv_local_dir: "{{ workstation_local_dir }}"
+workstation_uv_local_bin_dir: "{{ workstation_uv_local_dir }}/bin"
+workstation_uv_local_bin: "{{ workstation_uv_local_bin_dir }}/{{ workstation_uv_name }}"
+
+workstation_uvx_name: uvx
+workstation_uvx_local_bin: "{{ workstation_uv_local_bin_dir }}/{{ workstation_uvx_name }}"

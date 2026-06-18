@@ -39,3 +39,5 @@
 - include_tasks: app_vscode.yml
 
 - include_tasks: app_shellcheck.yml
+
+- include_tasks: app_uv.yml

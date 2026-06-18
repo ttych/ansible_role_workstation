@@ -1,0 +1,81 @@
+---
+
+- block:
+
+    - name: check current uv
+      ansible.builtin.stat:
+        path: "{{ workstation_uv_local_bin }}"
+      register: t_workstation_uv_local_bin
+
+    - block:
+
+        - name: get latest uv version from GitHub API
+          ansible.builtin.uri:
+            url: "{{ workstation_uv_github_api_latest_url }}"
+            return_content: yes
+          register: t_workstation_uv_github_latest_release
+          changed_when: no
+
+        - name: extract latest uv version
+          ansible.builtin.set_fact:
+            workstation_uv_version: "{{ (t_workstation_uv_github_latest_release.content | from_json).tag_name | replace('v', '') }}"
+
+      when: workstation_uv_version is not defined or workstation_uv_version == ""
+
+    - block:
+
+        - name: get current uv version
+          ansible.builtin.shell:
+            cmd: "{{ workstation_uv_local_bin }} --version | sed -n 's/^uv\\s\\([0-9.]*\\)\\s.*$/\\1/p'"
+          register: t_workstation_uv_current_version
+          changed_when: no
+
+      when: t_workstation_uv_local_bin.stat.exists
+
+    # - debug:
+    #     msg: "latest:{{ workstation_uv_version }}  -  current:{{ t_workstation_uv_current_version.stdout | d('') }}"
+
+    - block:
+
+        - name: download uv archive
+          ansible.builtin.get_url:
+            url: "{{ workstation_uv_github_download_url }}"
+            dest: "{{ workstation_tmp_dir }}/{{ workstation_uv_github_archive }}"
+            mode: '0644'
+
+        - name: extract uv archive
+          ansible.builtin.unarchive:
+            src: "{{ workstation_tmp_dir }}/{{ workstation_uv_github_archive }}"
+            dest: "{{ workstation_tmp_dir }}"
+            remote_src: yes
+            creates: "{{ workstation_tmp_dir }}/{{ workstation_uv_name }}"
+
+        - name: "install uv binary to {{ workstation_uv_local_bin }}"
+          ansible.builtin.copy:
+            src: "{{ workstation_tmp_dir }}/{{ workstation_uv_github_archive_name }}/{{ workstation_uv_name }}"
+            dest: "{{ workstation_uv_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: "install uvx binary to {{ workstation_uv_local_bin }}"
+          ansible.builtin.copy:
+            src: "{{ workstation_tmp_dir }}/{{ workstation_uv_github_archive_name }}/uvx"
+            dest: "{{ workstation_uvx_local_bin }}"
+            mode: '0755'
+            owner: root
+            group: root
+            remote_src: yes
+
+        - name: clean up temporary files
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - "{{ workstation_tmp_dir }}/{{ workstation_uv_github_archive }}"
+            - "{{ workstation_tmp_dir }}/{{ workstation_uv_github_archive_name }}"
+
+      when: not t_workstation_uv_local_bin.stat.exists or (t_workstation_uv_current_version is defined and t_workstation_uv_current_version.stdout != workstation_uv_version)
+
+  when: want_workstation_uv
