@@ -11,7 +11,7 @@
 
         - name: get latest docker_dive version from GitHub API
           ansible.builtin.uri:
-            url: "{{ workstation_docker_dive_github_api_url }}"
+            url: "{{ workstation_docker_dive_github_api_latest_url }}"
             return_content: yes
           register: t_workstation_docker_dive_github_latest_release
           changed_when: no

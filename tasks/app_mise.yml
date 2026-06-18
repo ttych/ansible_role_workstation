@@ -11,7 +11,7 @@
 
         - name: get latest mise version from GitHub API
           ansible.builtin.uri:
-            url: "{{ workstation_mise_github_api_url }}"
+            url: "{{ workstation_mise_github_api_latest_url }}"
             return_content: yes
           register: t_workstation_mise_github_latest_release
           changed_when: no

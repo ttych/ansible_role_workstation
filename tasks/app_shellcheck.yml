@@ -11,7 +11,7 @@
 
         - name: get latest shellcheck version from GitHub API
           ansible.builtin.uri:
-            url: "{{ workstation_shellcheck_github_api_url }}"
+            url: "{{ workstation_shellcheck_github_api_latest_url }}"
             return_content: yes
           register: t_workstation_shellcheck_github_latest_release
           changed_when: no
